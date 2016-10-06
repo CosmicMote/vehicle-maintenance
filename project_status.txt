@@ -1,0 +1,38 @@
+Vehicle Maintenance
+-------------------
+
+additonal validation?
+  - no dupe vehicle names
+  - mileage constraints
+  - required fields
+
+fix todos
+  - not strictly necessary
+update drawables script to also convert background to transparent
+testing
+additional maintenance types?
+  - maybe more static ones?
+  - allow them to be configured dynamically?
+
+put on github
+  - learn svn on github
+
+bugs/stuff to change:
+-----
+
+*order maintenance items by interval ascending
+
+backdoor for downloading db?
+
+if no mileage had been input for a vehicle, then editing the vehicle showed 0 rather than
+no mileage
+
+*notifications:
+  maybe show individual notification for each maintenance item soon/past due?
+  maybe show icon and status in notification?
+  maybe have notification link to maintenance item detail, instead of vehicle list?
+  give user more control over notifications?  
+
+  *how about:
+    show notification for each individual maintenance item due
+    check for notifications every hour, but only show once/day or once/week

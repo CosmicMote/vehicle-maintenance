@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.fowler.vehiclemaintenance.MaintenanceItemDetailActivity"
+    tools:showIn="@layout/activity_maintenance_item_detail">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Interval:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/intervalLabel"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/intervalTextView"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/intervalLabel"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last Done:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/lastDoneLabel"
+        android:layout_below="@+id/intervalLabel"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/lastDoneTextView"
+        android:layout_below="@+id/intervalLabel"
+        android:layout_toEndOf="@+id/lastDoneLabel"/>
+
+    <LinearLayout
+        android:id="@+id/maintenanceItemStatusLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/lastDoneLabel"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/maintenanceItemStatusImageView"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/maintenanceItemStatusTextView"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mark as done at "
+        android:id="@+id/markAsDoneAtCurrentMileageButton"
+        android:layout_below="@+id/maintenanceItemStatusLayout"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mark as done at mileage..."
+        android:id="@+id/markAsDoneAtCustomMileageButton"
+        android:layout_below="@+id/markAsDoneAtCurrentMileageButton"
+        android:layout_alignParentStart="true"/>
+</RelativeLayout>

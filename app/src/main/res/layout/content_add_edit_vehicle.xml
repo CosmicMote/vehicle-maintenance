@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".EditVehicleActivity"
+    tools:showIn="@layout/activity_add_edit_vehicle">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Name"
+        android:id="@+id/vehicleNameLabel"
+        android:layout_alignBaseline="@+id/vehicleNameEditText"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/vehicleNameEditText"
+        android:ems="11"
+        android:hint="Vehicle Name"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/milesPerMonthLabel"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Mileage"
+        android:id="@+id/mileageLabel"
+        android:layout_alignBaseline="@+id/vehicleCurrentMileageEditText"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="11"
+        android:hint="Current Mileage"
+        android:id="@+id/vehicleCurrentMileageEditText"
+        android:layout_below="@+id/vehicleNameEditText"
+        android:layout_toEndOf="@+id/milesPerMonthLabel"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Miles/Month"
+        android:id="@+id/milesPerMonthLabel"
+        android:layout_alignBaseline="@+id/vehicleMilesPerMonthEditText"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="11"
+        android:hint="Miles Per Month (Optional)"
+        android:id="@+id/vehicleMilesPerMonthEditText"
+        android:layout_below="@+id/vehicleCurrentMileageEditText"
+        android:layout_toEndOf="@+id/milesPerMonthLabel"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:id="@+id/newVehicleOkButton"
+        android:layout_below="@+id/vehicleMilesPerMonthEditText"
+        android:layout_centerHorizontal="true"/>
+
+
+</RelativeLayout>

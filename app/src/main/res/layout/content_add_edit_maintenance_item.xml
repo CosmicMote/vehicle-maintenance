@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".EditMaintenanceItemActivity"
+    tools:showIn="@layout/activity_add_edit_maintenance_item">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Type"
+        android:id="@+id/maintenanceTypeLabel"
+        android:layout_alignBaseline="@+id/maintenanceTypeSpinner"
+        android:layout_alignParentStart="true"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/maintenanceTypeSpinner"
+        android:layout_toEndOf="@+id/maintenanceIntervalLabel"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Mileage Interval"
+        android:id="@+id/maintenanceIntervalLabel"
+        android:layout_alignBaseline="@+id/intervalEditText"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/intervalEditText"
+        android:hint="Interval"
+        android:layout_below="@+id/maintenanceTypeSpinner"
+        android:layout_toEndOf="@+id/maintenanceIntervalLabel"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Last Mileage"
+        android:id="@+id/lastMileageLabel"
+        android:layout_alignBaseline="@+id/lastMileageEditText"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/lastMileageEditText"
+        android:hint="Last Mileage"
+        android:layout_below="@+id/intervalEditText"
+        android:layout_toEndOf="@+id/maintenanceIntervalLabel"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:id="@+id/newMaintenanceItemOkButton"
+        android:layout_below="@+id/lastMileageEditText"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>
