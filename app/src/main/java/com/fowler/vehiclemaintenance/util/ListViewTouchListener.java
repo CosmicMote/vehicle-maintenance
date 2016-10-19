@@ -96,9 +96,8 @@ public class ListViewTouchListener implements View.OnTouchListener {
                 } else {
                     child.animate().translationX(0).setDuration(100);
                     Log.d(TAG, String.format("ACTION_UP: Horizontal threshold not exceeded (|deltaX|=%s <= width/4=%s), snap back", Math.abs(deltaX), width / 4));
-                    // If no movement at all, this is a tap.  Return false to indicate the event was not handled so
-                    // that way the click listener will get invoked.
-                    if(deltaX == 0 && clickListener != null) { // TODO: might need a threshold rather than testing for == 0?
+                    // If no movement, this is a tap/click.
+                    if(Math.abs(deltaX) < 10 && clickListener != null) {
                         clickListener.onClick(child, childIdx);
                     }
                 }
