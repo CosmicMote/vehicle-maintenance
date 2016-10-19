@@ -108,7 +108,7 @@ public class VehicleDataService {
                     lastMileageDone = cursor.getInt(4);
                 Date lastNotification = null;
                 if(!cursor.isNull(5))
-                    lastNotification = new Date(cursor.getInt(5));
+                    lastNotification = new Date(cursor.getLong(5));
 
                 Vehicle vehicle = vehicles.get(vehicleId);
                 if(vehicle != null) {
@@ -214,7 +214,7 @@ public class VehicleDataService {
                     lastMileageDone = cursor.getInt(4);
                 Date lastNotification = null;
                 if(!cursor.isNull(5))
-                    lastNotification = new Date(cursor.getInt(5));
+                    lastNotification = new Date(cursor.getLong(5));
 
                 MaintenanceItem item =
                   new MaintenanceItem(vehicle, maintenanceItemId, type, mileageInterval, lastMileageDone,
