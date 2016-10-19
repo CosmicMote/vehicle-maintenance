@@ -58,7 +58,8 @@ public class EditMaintenanceItemActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 MaintenanceType maintenanceType = (MaintenanceType) spinner.getSelectedItem();
-                intervalEditText.setText("" + maintenanceType.getDefaultMileageInterval());
+                Integer interval = maintenanceType.getDefaultMileageInterval();
+                intervalEditText.setText(interval != null ? "" + interval : "");
             }
 
             @Override

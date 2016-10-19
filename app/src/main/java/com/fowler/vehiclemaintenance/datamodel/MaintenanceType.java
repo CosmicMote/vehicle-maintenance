@@ -8,7 +8,13 @@ public enum MaintenanceType {
     FUEL_FILTER("Fuel Filter", 50000),
     SPARK_PLUGS("Spark Plugs", 100000),
     TRANSMISSION_FLUID("Transmission Fluid", 50000),
-    COOLANT_FLUSH("Coolant Flush", 50000);
+    COOLANT_FLUSH("Coolant Flush", 50000),
+    DRIVE_BELT("Drive Belt"),
+    BRAKE_FLUID("Brake Fluid");
+
+    MaintenanceType(String text) {
+        this.text = text;
+    }
 
     MaintenanceType(String text, int defaultMileageInterval) {
         this.text = text;
@@ -16,9 +22,9 @@ public enum MaintenanceType {
     }
 
     private String text;
-    private int defaultMileageInterval;
+    private Integer defaultMileageInterval;
 
-    public int getDefaultMileageInterval() {
+    public Integer getDefaultMileageInterval() {
         return defaultMileageInterval;
     }
 
