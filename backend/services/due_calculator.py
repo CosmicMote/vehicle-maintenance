@@ -71,15 +71,17 @@ def calculate_due_status(
         record = latest_record_by_type.get(mtype.id)
 
         if record is None:
+            next_due_miles = mtype.interval_miles
+            miles_until_due = next_due_miles - current_miles
             items.append(DueStatusItem(
                 maintenance_type_id=mtype.id,
                 name=mtype.name,
                 interval_miles=mtype.interval_miles,
                 last_performed_miles=None,
                 last_performed_date=None,
-                next_due_miles=None,
+                next_due_miles=next_due_miles,
                 current_miles=current_miles,
-                miles_until_due=None,
+                miles_until_due=miles_until_due,
                 status="never_performed",
                 estimated_miles_used=estimated_miles_used,
             ))
