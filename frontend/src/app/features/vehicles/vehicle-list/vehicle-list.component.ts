@@ -49,6 +49,9 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
               </mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
+              @if (v.estimated_current_miles != null) {
+                <p class="muted">~{{ v.estimated_current_miles | number }} mi (estimated)</p>
+              }
               @if (v.avg_miles_per_year) {
                 <p class="muted">~{{ v.avg_miles_per_year | number }} mi/year</p>
               }

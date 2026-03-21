@@ -5,6 +5,7 @@ export interface Vehicle {
   model: string | null;
   year: number | null;
   avg_miles_per_year: number | null;
+  estimated_current_miles: number | null;
   created_at: string;
 }
 

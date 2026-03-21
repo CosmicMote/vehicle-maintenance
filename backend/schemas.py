@@ -25,6 +25,7 @@ class VehicleUpdate(VehicleBase):
 class VehicleResponse(VehicleBase):
     id: int
     created_at: datetime
+    estimated_current_miles: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
 
 
