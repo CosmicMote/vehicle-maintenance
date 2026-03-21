@@ -104,8 +104,4 @@ def calculate_due_status(
             estimated_miles_used=estimated_miles_used,
         ))
 
-    # Sort: overdue -> due -> upcoming -> never_performed -> ok
-    status_order = {"overdue": 0, "due": 1, "upcoming": 2, "never_performed": 3, "ok": 4}
-    items.sort(key=lambda i: status_order[i.status])
-
     return current_miles, estimated_miles_used, items

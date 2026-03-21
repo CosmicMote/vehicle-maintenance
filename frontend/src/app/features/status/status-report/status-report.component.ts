@@ -65,7 +65,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
           <ng-container matColumnDef="next_due">
             <th mat-header-cell *matHeaderCellDef>Next Due</th>
             <td mat-cell *matCellDef="let item">
-              @if (item.next_due_miles) {
+              @if (item.next_due_miles != null) {
                 {{ item.next_due_miles | number }} mi
               } @else {
                 —
@@ -75,14 +75,10 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
           <ng-container matColumnDef="miles_remaining">
             <th mat-header-cell *matHeaderCellDef>Miles Until Due</th>
             <td mat-cell *matCellDef="let item">
-              @if (item.miles_until_due !== null) {
-                @if (item.miles_until_due <= 0) {
-                  <span class="overdue">{{ item.miles_until_due | number }} mi overdue</span>
-                } @else {
-                  {{ item.miles_until_due | number }} mi
-                }
+              @if (item.miles_until_due <= 0) {
+                <span class="overdue">{{ item.miles_until_due | number }} mi overdue</span>
               } @else {
-                —
+                {{ item.miles_until_due | number }} mi
               }
             </td>
           </ng-container>
@@ -117,6 +113,9 @@ export class StatusReportComponent implements OnInit {
   check() {
     this.statusService
       .getStatus(this.vehicleId(), this.currentMiles ?? undefined)
-      .subscribe(r => this.result.set(r));
+      .subscribe(r => {
+        r.items.sort((a, b) => a.miles_until_due - b.miles_until_due);
+        this.result.set(r);
+      });
   }
 }

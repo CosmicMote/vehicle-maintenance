@@ -83,7 +83,7 @@ class DueStatusItem(BaseModel):
     last_performed_date: Optional[date] = None
     next_due_miles: Optional[int] = None
     current_miles: int
-    miles_until_due: Optional[int] = None
+    miles_until_due: int
     status: DueStatus
     estimated_miles_used: bool
 
