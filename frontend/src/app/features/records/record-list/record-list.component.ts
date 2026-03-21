@@ -76,7 +76,13 @@ export class RecordListComponent implements OnInit {
 
   load() {
     this.typeService.list(this.vehicleId()).subscribe(t => this.types.set(t));
-    this.recordService.list(this.vehicleId()).subscribe(r => this.records.set(r));
+    this.recordService.list(this.vehicleId()).subscribe(r => {
+      this.records.set(r.slice().sort((a, b) =>
+        a.performed_miles !== b.performed_miles
+          ? b.performed_miles - a.performed_miles
+          : (a.maintenance_type_name ?? '').localeCompare(b.maintenance_type_name ?? '')
+      ));
+    });
   }
 
   openForm() {
