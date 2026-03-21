@@ -62,7 +62,13 @@ export class TypeListComponent implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.typeService.list(this.vehicleId()).subscribe(t => this.types.set(t));
+    this.typeService.list(this.vehicleId()).subscribe(t => {
+      this.types.set(t.slice().sort((a, b) =>
+        a.interval_miles !== b.interval_miles
+          ? a.interval_miles - b.interval_miles
+          : a.name.localeCompare(b.name)
+      ));
+    });
   }
 
   openForm(type?: MaintenanceType) {
