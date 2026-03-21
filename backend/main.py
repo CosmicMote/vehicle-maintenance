@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import create_tables, run_migrations
-from .routers import maintenance_types, records, status, vehicles
+from .routers import maintenance_types, mileage, records, status, vehicles
 
 
 @asynccontextmanager
@@ -26,5 +26,6 @@ app.add_middleware(
 
 app.include_router(vehicles.router)
 app.include_router(maintenance_types.router)
+app.include_router(mileage.router)
 app.include_router(records.router)
 app.include_router(status.router)

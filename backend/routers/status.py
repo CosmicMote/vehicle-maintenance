@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import MaintenanceRecord, MaintenanceType, Vehicle
+from ..models import MaintenanceRecord, MaintenanceType, MileageRecord, Vehicle
 from ..schemas import DueStatusResponse
 from ..services.due_calculator import calculate_due_status
 
@@ -41,12 +41,20 @@ def get_due_status(
         )
         latest_record_by_type[mtype.id] = latest
 
+    latest_mileage_record = (
+        db.query(MileageRecord)
+        .filter(MileageRecord.vehicle_id == vehicle_id)
+        .order_by(MileageRecord.recorded_date.desc(), MileageRecord.miles.desc())
+        .first()
+    )
+
     resolved_miles, estimated, items = calculate_due_status(
         vehicle_id=vehicle_id,
         avg_miles_per_year=vehicle.avg_miles_per_year,
         maintenance_types=maintenance_types,
         latest_record_by_type=latest_record_by_type,
         supplied_current_miles=current_miles,
+        latest_mileage_record=latest_mileage_record,
     )
 
     return DueStatusResponse(

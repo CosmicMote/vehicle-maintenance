@@ -23,6 +23,9 @@ class Vehicle(Base):
     records = relationship(
         "MaintenanceRecord", back_populates="vehicle", cascade="all, delete-orphan"
     )
+    mileage_records = relationship(
+        "MileageRecord", back_populates="vehicle", cascade="all, delete-orphan"
+    )
 
 
 class MaintenanceType(Base):
@@ -38,6 +41,18 @@ class MaintenanceType(Base):
     records = relationship(
         "MaintenanceRecord", back_populates="maintenance_type", cascade="all, delete-orphan"
     )
+
+
+class MileageRecord(Base):
+    __tablename__ = "mileage_records"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id", ondelete="CASCADE"), nullable=False)
+    recorded_date = Column(Date, nullable=False)
+    miles = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=func.now())
+
+    vehicle = relationship("Vehicle", back_populates="mileage_records")
 
 
 class MaintenanceRecord(Base):

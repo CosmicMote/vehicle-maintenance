@@ -38,6 +38,7 @@ def calculate_due_status(
     maintenance_types: list,          # list of MaintenanceType ORM objects
     latest_record_by_type: dict,      # {maintenance_type_id: MaintenanceRecord}
     supplied_current_miles: Optional[int],
+    latest_mileage_record=None,       # MileageRecord ORM object or None
 ) -> tuple[int, bool, list[DueStatusItem]]:
     """
     Returns (current_miles, estimated_miles_used, list[DueStatusItem]).
@@ -48,20 +49,13 @@ def calculate_due_status(
     # Determine current mileage
     if supplied_current_miles is not None:
         current_miles = supplied_current_miles
-    elif avg_miles_per_year:
-        # Find the most recent record across all types to use as the anchor
-        all_records = [r for r in latest_record_by_type.values() if r is not None]
-        if all_records:
-            anchor = max(all_records, key=lambda r: r.performed_date)
-            current_miles = estimate_current_miles(
-                anchor.performed_miles,
-                anchor.performed_date,
-                avg_miles_per_year,
-            )
-        else:
-            # No records at all — estimate from 0
-            days_since_epoch = (date.today() - date(date.today().year, 1, 1)).days
-            current_miles = int(avg_miles_per_year * (days_since_epoch / 365.25))
+    elif avg_miles_per_year and latest_mileage_record is not None:
+        # Estimate forward from the most recent mileage record
+        current_miles = estimate_current_miles(
+            latest_mileage_record.miles,
+            latest_mileage_record.recorded_date,
+            avg_miles_per_year,
+        )
         estimated_miles_used = True
     else:
         current_miles = 0

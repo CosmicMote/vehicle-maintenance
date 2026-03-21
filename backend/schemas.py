@@ -71,6 +71,20 @@ class MaintenanceRecordResponse(MaintenanceRecordBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+# --- Mileage Record ---
+
+class MileageRecordCreate(BaseModel):
+    recorded_date: date
+    miles: int
+
+
+class MileageRecordResponse(MileageRecordCreate):
+    id: int
+    vehicle_id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
 # --- Due Status ---
 
 DueStatus = Literal["ok", "upcoming", "due", "overdue", "never_performed"]

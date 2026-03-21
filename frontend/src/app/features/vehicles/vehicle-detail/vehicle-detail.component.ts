@@ -6,6 +6,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Vehicle } from '../../../core/models/vehicle.model';
 import { VehicleService } from '../../../core/services/vehicle.service';
+import { MileageListComponent } from '../../mileage/mileage-list/mileage-list.component';
 import { TypeListComponent } from '../../maintenance-types/type-list/type-list.component';
 import { RecordListComponent } from '../../records/record-list/record-list.component';
 import { StatusReportComponent } from '../../status/status-report/status-report.component';
@@ -16,7 +17,7 @@ import { StatusReportComponent } from '../../status/status-report/status-report.
   imports: [
     RouterLink,
     MatButtonModule, MatIconModule, MatProgressBarModule, MatTabsModule,
-    TypeListComponent, RecordListComponent, StatusReportComponent,
+    MileageListComponent, TypeListComponent, RecordListComponent, StatusReportComponent,
   ],
   template: `
     @if (loading()) {
@@ -38,6 +39,11 @@ import { StatusReportComponent } from '../../status/status-report/status-report.
           <mat-tab label="Maintenance Types">
             <div class="tab-content">
               <app-type-list [vehicleId]="vehicle()!.id" />
+            </div>
+          </mat-tab>
+          <mat-tab label="Mileage Records">
+            <div class="tab-content">
+              <app-mileage-list [vehicleId]="vehicle()!.id" />
             </div>
           </mat-tab>
           <mat-tab label="Service Records">
