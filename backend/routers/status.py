@@ -44,7 +44,7 @@ def get_due_status(
     latest_mileage_record = (
         db.query(MileageRecord)
         .filter(MileageRecord.vehicle_id == vehicle_id)
-        .order_by(MileageRecord.recorded_date.desc(), MileageRecord.miles.desc())
+        .order_by(MileageRecord.miles.desc(), MileageRecord.recorded_date.desc())
         .first()
     )
 
