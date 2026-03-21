@@ -77,7 +77,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
             <td mat-cell *matCellDef="let item">
               @if (item.miles_until_due !== null) {
                 @if (item.miles_until_due <= 0) {
-                  {{ item.miles_until_due | number }} mi overdue
+                  <span class="overdue">{{ item.miles_until_due | number }} mi overdue</span>
                 } @else {
                   {{ item.miles_until_due | number }} mi
                 }
@@ -98,6 +98,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
     .estimate-note { color: #757575; font-style: italic; margin-bottom: 12px; }
     .full-width { width: 100%; }
     .empty { color: #9e9e9e; text-align: center; padding: 24px 0; }
+    .overdue { color: #d32f2f; font-weight: 500; }
   `]
 })
 export class StatusReportComponent implements OnInit {
