@@ -80,12 +80,14 @@ export class RecordListComponent implements OnInit {
   }
 
   openForm() {
-    const ref = this.dialog.open(RecordFormComponent, {
-      data: { maintenanceTypes: this.types() },
-      width: '420px',
-    });
-    ref.afterClosed().subscribe(result => {
-      if (result) this.recordService.create(this.vehicleId(), result).subscribe(() => this.load());
+    this.typeService.list(this.vehicleId()).subscribe(types => {
+      const ref = this.dialog.open(RecordFormComponent, {
+        data: { maintenanceTypes: types },
+        width: '420px',
+      });
+      ref.afterClosed().subscribe(result => {
+        if (result) this.recordService.create(this.vehicleId(), result).subscribe(() => this.load());
+      });
     });
   }
 
