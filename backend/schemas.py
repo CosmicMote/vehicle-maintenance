@@ -33,6 +33,7 @@ class VehicleResponse(VehicleBase):
 class MaintenanceTypeBase(BaseModel):
     name: str
     interval_miles: int
+    notes: Optional[str] = None
 
 
 class MaintenanceTypeCreate(MaintenanceTypeBase):

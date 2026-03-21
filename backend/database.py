@@ -22,3 +22,21 @@ def get_db():
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
+
+
+def run_migrations():
+    """Apply incremental schema changes that create_all cannot handle."""
+    with engine.connect() as conn:
+        existing = {
+            row[1]
+            for row in conn.execute(
+                __import__("sqlalchemy").text("PRAGMA table_info(maintenance_types)")
+            )
+        }
+        if "notes" not in existing:
+            conn.execute(
+                __import__("sqlalchemy").text(
+                    "ALTER TABLE maintenance_types ADD COLUMN notes TEXT"
+                )
+            )
+            conn.commit()

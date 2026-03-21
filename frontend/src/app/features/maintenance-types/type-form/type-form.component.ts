@@ -22,6 +22,10 @@ import { MaintenanceType } from '../../../core/models/maintenance-type.model';
           <mat-label>Interval (miles) *</mat-label>
           <input matInput formControlName="interval_miles" type="number" placeholder="e.g. 5000" />
         </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" rows="3"></textarea>
+        </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -39,6 +43,7 @@ export class TypeFormComponent {
   form = this.fb.group({
     name: [this.data?.name ?? '', Validators.required],
     interval_miles: [this.data?.interval_miles ?? null, [Validators.required, Validators.min(1)]],
+    notes: [this.data?.notes ?? ''],
   });
 
   save() {

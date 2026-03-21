@@ -3,11 +3,13 @@ export interface MaintenanceType {
   vehicle_id: number;
   name: string;
   interval_miles: number;
+  notes: string | null;
 }
 
 export interface MaintenanceTypeCreate {
   name: string;
   interval_miles: number;
+  notes?: string | null;
 }
 
 export type MaintenanceTypeUpdate = MaintenanceTypeCreate;

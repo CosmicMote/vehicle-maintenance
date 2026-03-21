@@ -33,6 +33,10 @@ import { DecimalPipe } from '@angular/common';
           <th mat-header-cell *matHeaderCellDef>Interval</th>
           <td mat-cell *matCellDef="let t">Every {{ t.interval_miles | number }} mi</td>
         </ng-container>
+        <ng-container matColumnDef="notes">
+          <th mat-header-cell *matHeaderCellDef>Notes</th>
+          <td mat-cell *matCellDef="let t">{{ t.notes }}</td>
+        </ng-container>
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let t">
@@ -57,7 +61,7 @@ export class TypeListComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   types = signal<MaintenanceType[]>([]);
-  cols = ['name', 'interval_miles', 'actions'];
+  cols = ['name', 'interval_miles', 'notes', 'actions'];
 
   ngOnInit() { this.load(); }
 
