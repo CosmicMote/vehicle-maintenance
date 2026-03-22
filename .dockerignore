@@ -1,0 +1,18 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+
+# Angular / Node
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+
+# Misc
+.git/
+.gitignore
+*.md

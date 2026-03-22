@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - vehicle_maintenance_data:/data
+    restart: unless-stopped
+
+volumes:
+  vehicle_maintenance_data:
