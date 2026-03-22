@@ -5,7 +5,6 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 
 from .database import create_tables, run_migrations
 from .routers import maintenance_types, mileage, records, status, vehicles
@@ -38,8 +37,6 @@ app.include_router(status.router)
 # Serve Angular frontend when static assets are present (i.e. inside Docker).
 _STATIC_DIR = Path(__file__).parent.parent / "frontend-dist"
 if _STATIC_DIR.is_dir():
-    app.mount("/assets", StaticFiles(directory=_STATIC_DIR / "assets"), name="assets")
-
     @app.get("/{full_path:path}", include_in_schema=False)
     async def spa_fallback(full_path: str):
         candidate = _STATIC_DIR / full_path
