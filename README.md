@@ -4,10 +4,64 @@ A web application for tracking vehicle maintenance schedules. Add vehicles, defi
 
 ## Prerequisites
 
+### Local Development
 - Python 3.13+
 - Node.js 18+
 
-## Running the Backend
+### Docker
+- Docker Desktop (or Docker Engine + Docker Compose on Linux)
+
+---
+
+## Running with Docker (Recommended)
+
+Docker builds the frontend, bundles everything into a single image, and persists the database in a named volume — no local Python or Node installation required.
+
+### Build and run with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+The app will be available at `http://localhost:8000`.
+
+To run in the background:
+
+```bash
+docker compose up --build -d
+```
+
+To stop:
+
+```bash
+docker compose down
+```
+
+### Build the image standalone (without Compose)
+
+```bash
+docker build -t vehicle-maintenance .
+```
+
+Run the standalone image:
+
+```bash
+docker run -p 8000:8000 -v vehicle_maintenance_data:/data vehicle-maintenance
+```
+
+### Database persistence
+
+The SQLite database is stored in a Docker named volume (`vehicle_maintenance_data`). It persists across container restarts and rebuilds. To start fresh, remove the volume:
+
+```bash
+docker volume rm vehicle-maintenance_vehicle_maintenance_data
+```
+
+---
+
+## Running Locally (Development)
+
+### Running the Backend
 
 From the project root:
 
@@ -31,6 +85,8 @@ npm start
 The app will be available at `http://localhost:4200`.
 
 The dev server proxies all `/api` requests to the backend at `localhost:8000`, so both servers must be running.
+
+---
 
 ## Project Structure
 
@@ -61,8 +117,11 @@ vehicle-maintenance/
 │       │   └── interceptors/    # Global error handler
 │       └── shared/
 │           └── components/      # StatusBadge, ConfirmDialog
-├── venv/                        # Python virtual environment
-└── vehicle_maintenance.db       # SQLite database (created on first run)
+├── Dockerfile                   # Multi-stage Docker build
+├── docker-compose.yml           # Compose file with persistent volume
+├── .dockerignore
+├── venv/                        # Python virtual environment (local dev only)
+└── vehicle_maintenance.db       # SQLite database (local dev only; Docker uses a volume)
 ```
 
 ## Features
