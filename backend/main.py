@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 from .database import create_tables, run_migrations
-from .routers import maintenance_types, mileage, records, status, vehicles
+from .routers import admin, maintenance_types, mileage, records, status, vehicles
 
 
 @asynccontextmanager
@@ -28,6 +28,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(admin.router)
 app.include_router(vehicles.router)
 app.include_router(maintenance_types.router)
 app.include_router(mileage.router)

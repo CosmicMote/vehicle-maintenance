@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+venv/
+.env
+.env.*
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# Docker local overrides
+docker-compose.local.yml
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
