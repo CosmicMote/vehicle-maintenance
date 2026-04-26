@@ -88,22 +88,82 @@ The dev server proxies all `/api` requests to the backend at `localhost:8000`, s
 
 ---
 
+---
+
+## Dropbox Backups
+
+The app can automatically back up the SQLite database to Dropbox on a configurable schedule. Backups are disabled by default and only activate when the required environment variables are set.
+
+### One-time setup
+
+**1. Create a Dropbox app**
+
+Go to [https://www.dropbox.com/developers/apps](https://www.dropbox.com/developers/apps) and create a new app:
+- Access type: **Full Dropbox** (or App folder for isolation)
+- Under the **Permissions** tab, enable: `files.content.write`
+
+Note the **App key** and **App secret** from the Settings tab.
+
+**2. Obtain an OAuth2 refresh token**
+
+From the project root, run the interactive setup script:
+
+```bash
+python scripts/setup_dropbox.py
+```
+
+Follow the prompts — it will open a Dropbox authorization URL, then print the three environment variables to add to your configuration.
+
+**3. Configure the environment variables**
+
+Copy `.env.example` to `.env` and fill in the Dropbox values:
+
+```bash
+DROPBOX_APP_KEY=your_app_key
+DROPBOX_APP_SECRET=your_app_secret
+DROPBOX_REFRESH_TOKEN=your_refresh_token
+
+# Optional — defaults shown
+DROPBOX_BACKUP_PATH=/vehicle-maintenance/vehicle_maintenance.db
+BACKUP_INTERVAL_HOURS=24
+```
+
+`BACKUP_INTERVAL_HOURS` accepts fractional values (e.g. `0.5` for every 30 minutes).
+
+### Docker
+
+Pass the variables via a `.env` file or directly in `docker-compose.yml` under `environment:`. The backup runs inside the container on the configured schedule.
+
+### How it works
+
+- On startup, if the `DROPBOX_*` variables are present the scheduler starts automatically and logs the configured interval.
+- Each backup creates a consistent snapshot of the live database using SQLite's backup API, then uploads it to the configured Dropbox path with overwrite mode.
+- Dropbox's built-in version history retains previous backups, so older copies are recoverable from the Dropbox web interface even though only one file is kept at the destination path.
+- If a backup fails (network error, expired token, etc.) the error is logged and the app continues running — a failed backup never crashes the server.
+
+---
+
 ## Project Structure
 
 ```
 vehicle-maintenance/
 ├── backend/
-│   ├── main.py                  # FastAPI app entry point
+│   ├── main.py                  # FastAPI app entry point + scheduler lifecycle
 │   ├── database.py              # SQLAlchemy engine and session
 │   ├── models.py                # ORM models (Vehicle, MaintenanceType, MaintenanceRecord)
 │   ├── schemas.py               # Pydantic request/response schemas
+│   ├── backup.py                # Dropbox backup logic
 │   ├── routers/
 │   │   ├── vehicles.py          # GET/POST/PUT/DELETE /api/vehicles
 │   │   ├── maintenance_types.py # CRUD for maintenance types per vehicle
 │   │   ├── records.py           # CRUD for service records per vehicle
+│   │   ├── mileage.py           # CRUD for mileage records per vehicle
+│   │   ├── admin.py             # Database export/import endpoints
 │   │   └── status.py            # GET /api/vehicles/{id}/status
 │   └── services/
 │       └── due_calculator.py    # Due/overdue business logic
+├── scripts/
+│   └── setup_dropbox.py         # One-time Dropbox OAuth2 setup helper
 ├── frontend/
 │   └── src/app/
 │       ├── features/

@@ -1,20 +1,45 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv()  # Must run before any module-level os.environ.get() calls
+
+from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
+from .backup import BACKUP_INTERVAL_HOURS, is_configured, run_backup
 from .database import create_tables, run_migrations
 from .routers import admin, maintenance_types, mileage, records, status, vehicles
+
+logger = logging.getLogger("uvicorn.error")
+_scheduler = BackgroundScheduler()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
     run_migrations()
+
+    if is_configured():
+        _scheduler.add_job(
+            run_backup, "interval", seconds=BACKUP_INTERVAL_HOURS * 3600, id="dropbox_backup"
+        )
+        _scheduler.start()
+        logger.info(
+            "Dropbox backup scheduler started — running every %g hour(s).",
+            BACKUP_INTERVAL_HOURS,
+        )
+    else:
+        logger.info("Dropbox backup not configured — scheduler not started.")
+
     yield
+
+    if _scheduler.running:
+        _scheduler.shutdown(wait=False)
 
 
 app = FastAPI(title="Vehicle Maintenance API", lifespan=lifespan)
