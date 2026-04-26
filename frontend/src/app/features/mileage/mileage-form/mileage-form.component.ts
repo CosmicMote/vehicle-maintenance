@@ -22,6 +22,10 @@ import { MileageRecord } from '../../../core/models/mileage-record.model';
           <mat-label>Date *</mat-label>
           <input matInput formControlName="recorded_date" type="date" />
         </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" rows="3"></textarea>
+        </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -41,6 +45,7 @@ export class MileageFormComponent {
   form = this.fb.group({
     miles: [this.data?.miles ?? null as number | null, [Validators.required, Validators.min(0)]],
     recorded_date: [this.data?.recorded_date ?? this.today, Validators.required],
+    notes: [this.data?.notes ?? ''],
   });
 
   save() {

@@ -50,6 +50,7 @@ class MileageRecord(Base):
     vehicle_id = Column(Integer, ForeignKey("vehicles.id", ondelete="CASCADE"), nullable=False)
     recorded_date = Column(Date, nullable=False)
     miles = Column(Integer, nullable=False)
+    notes = Column(Text)
     created_at = Column(DateTime, default=func.now())
 
     vehicle = relationship("Vehicle", back_populates="mileage_records")

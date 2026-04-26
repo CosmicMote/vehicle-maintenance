@@ -42,3 +42,18 @@ def run_migrations():
                 )
             )
             conn.commit()
+
+    with engine.connect() as conn:
+        existing = {
+            row[1]
+            for row in conn.execute(
+                __import__("sqlalchemy").text("PRAGMA table_info(mileage_records)")
+            )
+        }
+        if "notes" not in existing:
+            conn.execute(
+                __import__("sqlalchemy").text(
+                    "ALTER TABLE mileage_records ADD COLUMN notes TEXT"
+                )
+            )
+            conn.commit()

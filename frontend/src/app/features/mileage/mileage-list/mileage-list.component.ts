@@ -33,6 +33,10 @@ import { MileageFormComponent } from '../mileage-form/mileage-form.component';
           <th mat-header-cell *matHeaderCellDef>Odometer</th>
           <td mat-cell *matCellDef="let r">{{ r.miles | number }} mi</td>
         </ng-container>
+        <ng-container matColumnDef="notes">
+          <th mat-header-cell *matHeaderCellDef>Notes</th>
+          <td mat-cell *matCellDef="let r">{{ r.notes }}</td>
+        </ng-container>
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let r">
@@ -61,7 +65,7 @@ export class MileageListComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   records = signal<MileageRecord[]>([]);
-  cols = ['date', 'miles', 'actions'];
+  cols = ['date', 'miles', 'notes', 'actions'];
 
   ngOnInit() { this.load(); }
 

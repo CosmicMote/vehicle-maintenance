@@ -77,6 +77,7 @@ class MaintenanceRecordResponse(MaintenanceRecordBase):
 class MileageRecordCreate(BaseModel):
     recorded_date: date
     miles: int
+    notes: Optional[str] = None
 
 
 class MileageRecordResponse(MileageRecordCreate):
