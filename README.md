@@ -13,6 +13,22 @@ A web application for tracking vehicle maintenance schedules. Add vehicles, defi
 
 ---
 
+## Environment Variables
+
+All configuration is via environment variables. For local development, copy `.env.example` to `.env` — the app loads it automatically on startup.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DATABASE_URL` | `sqlite:///./vehicle_maintenance.db` | SQLAlchemy database URL. In Docker the default is `sqlite:////data/vehicle_maintenance.db`. |
+| `CORS_ORIGINS` | `http://localhost:4200` | Comma-separated list of allowed CORS origins. Only needed when the frontend and backend are on different origins. |
+| `DROPBOX_APP_KEY` | _(unset)_ | Dropbox app key. Backups are disabled when any of the three `DROPBOX_*` vars are absent. |
+| `DROPBOX_APP_SECRET` | _(unset)_ | Dropbox app secret. |
+| `DROPBOX_REFRESH_TOKEN` | _(unset)_ | OAuth2 refresh token obtained via `scripts/setup_dropbox.py`. |
+| `DROPBOX_BACKUP_PATH` | `/vehicle-maintenance/vehicle_maintenance.db` | Destination path inside Dropbox. The file is overwritten on each backup; Dropbox version history preserves older copies. |
+| `BACKUP_INTERVAL_HOURS` | `24` | How often to run the backup. Accepts fractional values (e.g. `0.5` for every 30 minutes). |
+
+---
+
 ## Running with Docker (Recommended)
 
 Docker builds the frontend, bundles everything into a single image, and persists the database in a named volume — no local Python or Node installation required.
@@ -46,7 +62,8 @@ docker build -t vehicle-maintenance .
 Run the standalone image:
 
 ```bash
-docker run -p 8000:8000 -v vehicle_maintenance_data:/data vehicle-maintenance
+# Assumes there is a .env file in current directory you want to load
+docker run --env-file .env --restart unless-stopped -p 8000:8000 -v vehicle_maintenance_data:/data vehicle-maintenance
 ```
 
 ### Database persistence
