@@ -4,9 +4,11 @@ export interface DueStatusItem {
   maintenance_type_id: number;
   name: string;
   interval_miles: number;
+  interval_months: number | null;
   last_performed_miles: number | null;
   last_performed_date: string | null;
   next_due_miles: number | null;
+  next_due_date: string | null;
   current_miles: number;
   miles_until_due: number;
   status: DueStatus;

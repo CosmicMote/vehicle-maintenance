@@ -34,6 +34,7 @@ class VehicleResponse(VehicleBase):
 class MaintenanceTypeBase(BaseModel):
     name: str
     interval_miles: int
+    interval_months: Optional[int] = None
     notes: Optional[str] = None
 
 
@@ -96,9 +97,11 @@ class DueStatusItem(BaseModel):
     maintenance_type_id: int
     name: str
     interval_miles: int
+    interval_months: Optional[int] = None
     last_performed_miles: Optional[int] = None
     last_performed_date: Optional[date] = None
     next_due_miles: Optional[int] = None
+    next_due_date: Optional[date] = None
     current_miles: int
     miles_until_due: int
     status: DueStatus

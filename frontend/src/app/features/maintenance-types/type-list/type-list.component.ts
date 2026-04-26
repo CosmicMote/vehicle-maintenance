@@ -31,7 +31,10 @@ import { DecimalPipe } from '@angular/common';
         </ng-container>
         <ng-container matColumnDef="interval_miles">
           <th mat-header-cell *matHeaderCellDef>Interval</th>
-          <td mat-cell *matCellDef="let t">Every {{ t.interval_miles | number }} mi</td>
+          <td mat-cell *matCellDef="let t">
+            Every {{ t.interval_miles | number }} mi
+            @if (t.interval_months) { or {{ t.interval_months }} month{{ t.interval_months === 1 ? '' : 's' }} }
+          </td>
         </ng-container>
         <ng-container matColumnDef="notes">
           <th mat-header-cell *matHeaderCellDef>Notes</th>

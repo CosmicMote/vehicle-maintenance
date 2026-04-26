@@ -57,3 +57,18 @@ def run_migrations():
                 )
             )
             conn.commit()
+
+    with engine.connect() as conn:
+        existing = {
+            row[1]
+            for row in conn.execute(
+                __import__("sqlalchemy").text("PRAGMA table_info(maintenance_types)")
+            )
+        }
+        if "interval_months" not in existing:
+            conn.execute(
+                __import__("sqlalchemy").text(
+                    "ALTER TABLE maintenance_types ADD COLUMN interval_months INTEGER"
+                )
+            )
+            conn.commit()

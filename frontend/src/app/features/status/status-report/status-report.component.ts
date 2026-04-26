@@ -67,18 +67,35 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
             <td mat-cell *matCellDef="let item">
               @if (item.next_due_miles != null) {
                 {{ item.next_due_miles | number }} mi
+                @if (item.next_due_date) {
+                  or {{ item.next_due_date | date:'mediumDate' }}
+                }
               } @else {
                 —
               }
             </td>
           </ng-container>
           <ng-container matColumnDef="miles_remaining">
-            <th mat-header-cell *matHeaderCellDef>Miles Until Due</th>
+            <th mat-header-cell *matHeaderCellDef>Miles and Days Until Due</th>
             <td mat-cell *matCellDef="let item">
-              @if (item.miles_until_due <= 0) {
-                <span class="overdue">{{ item.miles_until_due | number }} mi overdue</span>
+              @if (item.interval_months && item.next_due_date) {
+                @if (item.miles_until_due <= 0) {
+                  <span class="overdue">{{ item.miles_until_due | number }} mi overdue</span>
+                } @else {
+                  {{ item.miles_until_due | number }} mi
+                },
+                @let days = daysUntilDue(item.next_due_date);
+                @if (days <= 0) {
+                  <span class="overdue">{{ days | number }} days overdue</span>
+                } @else {
+                  {{ days | number }} days
+                }
               } @else {
-                {{ item.miles_until_due | number }} mi
+                @if (item.miles_until_due <= 0) {
+                  <span class="overdue">{{ item.miles_until_due | number }} mi overdue</span>
+                } @else {
+                  {{ item.miles_until_due | number }} mi
+                }
               }
             </td>
           </ng-container>
@@ -117,5 +134,15 @@ export class StatusReportComponent implements OnInit {
         r.items.sort((a, b) => a.miles_until_due - b.miles_until_due);
         this.result.set(r);
       });
+  }
+
+  /** Parse a YYYY-MM-DD string in local time and return days until that date (negative = overdue). */
+  daysUntilDue(nextDueDateStr: string): number {
+    const [year, month, day] = nextDueDateStr.split('-').map(Number);
+    const nextDue = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    nextDue.setHours(0, 0, 0, 0);
+    return Math.round((nextDue.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   }
 }

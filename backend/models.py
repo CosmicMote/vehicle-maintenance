@@ -35,6 +35,7 @@ class MaintenanceType(Base):
     vehicle_id = Column(Integer, ForeignKey("vehicles.id", ondelete="CASCADE"), nullable=False)
     name = Column(String, nullable=False)
     interval_miles = Column(Integer, nullable=False)
+    interval_months = Column(Integer)
     notes = Column(Text)
 
     vehicle = relationship("Vehicle", back_populates="maintenance_types")
