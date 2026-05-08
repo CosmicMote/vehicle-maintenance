@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -6,7 +7,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()  # Must run before any module-level os.environ.get() calls
 
-from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -16,7 +16,22 @@ from .database import create_tables, run_migrations
 from .routers import admin, maintenance_types, mileage, records, status, vehicles
 
 logger = logging.getLogger("uvicorn.error")
-_scheduler = BackgroundScheduler()
+
+
+async def _backup_loop() -> None:
+    """Run backups on a fixed interval using asyncio — more reliable than a daemon thread."""
+    logger.info(
+        "Dropbox backup scheduler started — running every %g hour(s).",
+        BACKUP_INTERVAL_HOURS,
+    )
+    while True:
+        await asyncio.sleep(BACKUP_INTERVAL_HOURS * 3600)
+        try:
+            await asyncio.to_thread(run_backup)
+        except Exception:
+            # run_backup already logs its own exceptions; this outer guard
+            # ensures the loop never exits due to an unexpected error.
+            logger.exception("Unexpected error in backup loop — continuing.")
 
 
 @asynccontextmanager
@@ -24,22 +39,20 @@ async def lifespan(app: FastAPI):
     create_tables()
     run_migrations()
 
+    task: asyncio.Task | None = None
     if is_configured():
-        _scheduler.add_job(
-            run_backup, "interval", seconds=BACKUP_INTERVAL_HOURS * 3600, id="dropbox_backup"
-        )
-        _scheduler.start()
-        logger.info(
-            "Dropbox backup scheduler started — running every %g hour(s).",
-            BACKUP_INTERVAL_HOURS,
-        )
+        task = asyncio.create_task(_backup_loop())
     else:
         logger.info("Dropbox backup not configured — scheduler not started.")
 
     yield
 
-    if _scheduler.running:
-        _scheduler.shutdown(wait=False)
+    if task is not None:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
 
 
 app = FastAPI(title="Vehicle Maintenance API", lifespan=lifespan)
