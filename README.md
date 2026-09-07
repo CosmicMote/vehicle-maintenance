@@ -21,6 +21,7 @@ All configuration is via environment variables. For local development, copy `.en
 |----------|---------|-------------|
 | `DATABASE_URL` | `sqlite:///./vehicle_maintenance.db` | SQLAlchemy database URL. In Docker the default is `sqlite:////data/vehicle_maintenance.db`. |
 | `CORS_ORIGINS` | `http://localhost:4200` | Comma-separated list of allowed CORS origins. Only needed when the frontend and backend are on different origins. |
+| `BASE_PATH` | _(unset — app resides at root)_ | Sub-path to serve the app from when it sits behind a reverse proxy that routes by path, e.g. `/vehicle-maintenance` for `https://host/vehicle-maintenance/`. Applies to both the API routes and the served frontend. |
 | `DROPBOX_APP_KEY` | _(unset)_ | Dropbox app key. Backups are disabled when any of the three `DROPBOX_*` vars are absent. |
 | `DROPBOX_APP_SECRET` | _(unset)_ | Dropbox app secret. |
 | `DROPBOX_REFRESH_TOKEN` | _(unset)_ | OAuth2 refresh token obtained via `scripts/setup_dropbox.py`. |
@@ -72,6 +73,23 @@ The SQLite database is stored in a Docker named volume (`vehicle_maintenance_dat
 
 ```bash
 docker volume rm vehicle-maintenance_vehicle_maintenance_data
+```
+
+### Running behind a reverse proxy on a sub-path
+
+If a reverse proxy (e.g. nginx) exposes the app at a path other than the domain root, such as `https://host/vehicle-maintenance/`, set `BASE_PATH` so the app serves its API and static assets from that sub-path instead of assuming it owns the root:
+
+```bash
+BASE_PATH=/vehicle-maintenance
+```
+
+The proxy should forward the path as-is (no prefix stripping), e.g.:
+
+```nginx
+location /vehicle-maintenance/ {
+    proxy_pass http://localhost:8000;
+    proxy_set_header Host $host;
+}
 ```
 
 ---
