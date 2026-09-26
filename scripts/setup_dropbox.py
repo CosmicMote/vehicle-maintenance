@@ -5,7 +5,7 @@ One-time script to obtain Dropbox OAuth2 credentials for the backup feature.
 Steps:
   1. Go to https://www.dropbox.com/developers/apps and create a new app.
      - Choose "Scoped access" → "Full Dropbox" (or "App folder" for isolation).
-     - Under Permissions, enable: files.content.write, files.content.read.
+     - Under Permissions, enable: files.content.write, files.content.read, files.metadata.read.
   2. Note your App key and App secret from the Settings tab.
   3. Run this script:
        python scripts/setup_dropbox.py
@@ -48,5 +48,6 @@ print(f"DROPBOX_APP_SECRET={app_secret}")
 print(f"DROPBOX_REFRESH_TOKEN={result.refresh_token}")
 print()
 print("Optional (defaults shown):")
-print("DROPBOX_BACKUP_PATH=/vehicle-maintenance/vehicle_maintenance.db")
+print("DROPBOX_BACKUP_PATH=/vehicle-maintenance/vehicle-maintenance.db")
+print("DROPBOX_BACKUP_RETENTION_COUNT=5")
 print("BACKUP_INTERVAL_HOURS=24")

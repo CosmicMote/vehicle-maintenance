@@ -25,7 +25,8 @@ All configuration is via environment variables. For local development, copy `.en
 | `DROPBOX_APP_KEY` | _(unset)_ | Dropbox app key. Backups are disabled when any of the three `DROPBOX_*` vars are absent. |
 | `DROPBOX_APP_SECRET` | _(unset)_ | Dropbox app secret. |
 | `DROPBOX_REFRESH_TOKEN` | _(unset)_ | OAuth2 refresh token obtained via `scripts/setup_dropbox.py`. |
-| `DROPBOX_BACKUP_PATH` | `/vehicle-maintenance/vehicle_maintenance.db` | Destination path inside Dropbox. The file is overwritten on each backup; Dropbox version history preserves older copies. |
+| `DROPBOX_BACKUP_PATH` | `/vehicle-maintenance/vehicle-maintenance.db` | Destination path inside Dropbox. Each backup is uploaded alongside this path with a timestamp appended to the filename, e.g. `vehicle-maintenance-2026-09-26_14-30-00.db`. |
+| `DROPBOX_BACKUP_RETENTION_COUNT` | `5` | Number of timestamped backups to keep. Older backups beyond this count are deleted after each successful upload. Set to `0` to disable pruning. |
 | `BACKUP_INTERVAL_HOURS` | `24` | How often to run the backup. Accepts fractional values (e.g. `0.5` for every 30 minutes). |
 
 ---
@@ -135,7 +136,7 @@ The app can automatically back up the SQLite database to Dropbox on a configurab
 
 Go to [https://www.dropbox.com/developers/apps](https://www.dropbox.com/developers/apps) and create a new app:
 - Access type: **Full Dropbox** (or App folder for isolation)
-- Under the **Permissions** tab, enable: `files.content.write`
+- Under the **Permissions** tab, enable: `files.content.write` and `files.metadata.read` (the latter is needed to list and prune old backups)
 
 Note the **App key** and **App secret** from the Settings tab.
 
@@ -159,7 +160,8 @@ DROPBOX_APP_SECRET=your_app_secret
 DROPBOX_REFRESH_TOKEN=your_refresh_token
 
 # Optional — defaults shown
-DROPBOX_BACKUP_PATH=/vehicle-maintenance/vehicle_maintenance.db
+DROPBOX_BACKUP_PATH=/vehicle-maintenance/vehicle-maintenance.db
+DROPBOX_BACKUP_RETENTION_COUNT=5
 BACKUP_INTERVAL_HOURS=24
 ```
 
@@ -172,8 +174,8 @@ Pass the variables via a `.env` file or directly in `docker-compose.yml` under `
 ### How it works
 
 - On startup, if the `DROPBOX_*` variables are present the scheduler starts automatically and logs the configured interval.
-- Each backup creates a consistent snapshot of the live database using SQLite's backup API, then uploads it to the configured Dropbox path with overwrite mode.
-- Dropbox's built-in version history retains previous backups, so older copies are recoverable from the Dropbox web interface even though only one file is kept at the destination path.
+- Each backup creates a consistent snapshot of the live database using SQLite's backup API, then uploads it to the configured Dropbox folder with a timestamp appended to the filename, e.g. `vehicle-maintenance-2026-09-26_14-30-00.db`.
+- After each successful upload, older timestamped backups beyond `DROPBOX_BACKUP_RETENTION_COUNT` (default `5`) are deleted from Dropbox automatically. Set `DROPBOX_BACKUP_RETENTION_COUNT=0` to keep every backup.
 - If a backup fails (network error, expired token, etc.) the error is logged and the app continues running — a failed backup never crashes the server.
 
 ---
