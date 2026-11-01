@@ -7,7 +7,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
   return next(req).pipe(
     catchError(err => {
-      const message = err.error?.detail ?? err.message ?? 'An unexpected error occurred';
+      const detail = err.error?.detail;
+      // FastAPI validation errors (422) return a list of {msg, ...} objects
+      const message = Array.isArray(detail)
+        ? detail.map((d: { msg?: string }) => (d.msg ?? '').replace(/^Value error, /, '')).join('; ')
+        : detail ?? err.message ?? 'An unexpected error occurred';
       snackBar.open(message, 'Dismiss', { duration: 5000, panelClass: 'error-snackbar' });
       return throwError(() => err);
     })

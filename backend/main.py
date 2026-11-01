@@ -13,7 +13,8 @@ from fastapi.responses import FileResponse, HTMLResponse
 
 from .backup import BACKUP_INTERVAL_HOURS, is_configured, run_backup
 from .database import create_tables, run_migrations
-from .routers import admin, maintenance_types, mileage, records, status, vehicles
+from .routers import admin, email, maintenance_types, mileage, records, status, vehicles
+from .services.reminders import CHECK_INTERVAL_SECONDS, run_scheduled_check
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -45,20 +46,30 @@ async def _backup_loop() -> None:
             logger.exception("Unexpected error in backup loop — continuing.")
 
 
+async def _reminder_loop() -> None:
+    """Check hourly whether a reminder email is due; settings are re-read on every check."""
+    while True:
+        try:
+            await asyncio.to_thread(run_scheduled_check)
+        except Exception:
+            logger.exception("Unexpected error in reminder loop — continuing.")
+        await asyncio.sleep(CHECK_INTERVAL_SECONDS)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
     run_migrations()
 
-    task: asyncio.Task | None = None
+    tasks: list[asyncio.Task] = [asyncio.create_task(_reminder_loop())]
     if is_configured():
-        task = asyncio.create_task(_backup_loop())
+        tasks.append(asyncio.create_task(_backup_loop()))
     else:
         logger.info("Dropbox backup not configured — scheduler not started.")
 
     yield
 
-    if task is not None:
+    for task in tasks:
         task.cancel()
         try:
             await task
@@ -79,6 +90,7 @@ app.add_middleware(
 
 api_router = APIRouter(prefix=BASE_PATH)
 api_router.include_router(admin.router)
+api_router.include_router(email.router)
 api_router.include_router(vehicles.router)
 api_router.include_router(maintenance_types.router)
 api_router.include_router(mileage.router)

@@ -20,6 +20,9 @@ import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confi
       <span style="margin-left:8px">Vehicle Maintenance</span>
       <span class="spacer"></span>
       <a mat-button routerLink="/vehicles">My Vehicles</a>
+      <a mat-icon-button routerLink="/admin" matTooltip="Admin settings">
+        <mat-icon>settings</mat-icon>
+      </a>
       <button mat-icon-button matTooltip="Export database" (click)="exportDb()">
         <mat-icon>download</mat-icon>
       </button>

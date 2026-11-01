@@ -107,6 +107,11 @@ def calculate_due_status(
             # Never performed — can calculate next_due_miles but not next_due_date
             next_due_miles = mtype.interval_miles
             miles_until_due = next_due_miles - current_miles
+            # Apply the usual mileage thresholds so a never-done item past its first
+            # interval shows as overdue/due/upcoming; "Never Done" only replaces "OK".
+            status = classify_miles_status(miles_until_due)
+            if status == "ok":
+                status = "never_performed"
             items.append(DueStatusItem(
                 maintenance_type_id=mtype.id,
                 name=mtype.name,
@@ -118,7 +123,7 @@ def calculate_due_status(
                 next_due_date=None,
                 current_miles=current_miles,
                 miles_until_due=miles_until_due,
-                status="never_performed",
+                status=status,
                 estimated_miles_used=estimated_miles_used,
             ))
             continue

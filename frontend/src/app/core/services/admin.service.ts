@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { EmailSettings, EmailSettingsUpdate, SendReminderResult } from '../models/email-settings.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -23,5 +24,22 @@ export class AdminService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<void>('/api/admin/db/import', formData);
+  }
+
+  getEmailSettings(): Observable<EmailSettings> {
+    return this.http.get<EmailSettings>('/api/admin/email/settings');
+  }
+
+  updateEmailSettings(payload: EmailSettingsUpdate): Observable<EmailSettings> {
+    return this.http.put<EmailSettings>('/api/admin/email/settings', payload);
+  }
+
+  sendReminderNow(): Observable<SendReminderResult> {
+    return this.http.post<SendReminderResult>('/api/admin/email/send', {});
+  }
+
+  /** Opens the rendered reminder email in a new tab (resolved against <base href> for BASE_PATH). */
+  openEmailPreview(): void {
+    window.open(new URL('api/admin/email/preview', document.baseURI).href, '_blank');
   }
 }

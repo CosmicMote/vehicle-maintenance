@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -72,3 +72,24 @@ class MaintenanceRecord(Base):
 
     vehicle = relationship("Vehicle", back_populates="records")
     maintenance_type = relationship("MaintenanceType", back_populates="records")
+
+
+class EmailSettings(Base):
+    """Singleton row (id=1) holding app-wide reminder email configuration.
+
+    The SMTP password is deliberately not stored here; it comes from the
+    SMTP_PASSWORD environment variable.
+    """
+    __tablename__ = "email_settings"
+
+    id = Column(Integer, primary_key=True)
+    enabled = Column(Boolean, nullable=False, default=False)
+    smtp_host = Column(String, nullable=False, default="")
+    smtp_port = Column(Integer, nullable=False, default=587)
+    smtp_security = Column(String, nullable=False, default="starttls")  # starttls | ssl | none
+    smtp_username = Column(String, nullable=False, default="")
+    from_address = Column(String, nullable=False, default="")
+    to_addresses = Column(Text, nullable=False, default="")  # comma-separated
+    threshold = Column(String, nullable=False, default="due")  # overdue | due
+    frequency_days = Column(Integer, nullable=False, default=7)
+    last_sent_at = Column(DateTime)  # UTC, naive

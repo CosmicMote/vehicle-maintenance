@@ -28,6 +28,7 @@ All configuration is via environment variables. For local development, copy `.en
 | `DROPBOX_BACKUP_PATH` | `/vehicle-maintenance/vehicle-maintenance.db` | Destination path inside Dropbox. Each backup is uploaded alongside this path with a timestamp appended to the filename, e.g. `vehicle-maintenance-2026-09-26_14-30-00.db`. |
 | `DROPBOX_BACKUP_RETENTION_COUNT` | `5` | Number of timestamped backups to keep. Older backups beyond this count are deleted after each successful upload. Set to `0` to disable pruning. |
 | `BACKUP_INTERVAL_HOURS` | `24` | How often to run the backup. Accepts fractional values (e.g. `0.5` for every 30 minutes). |
+| `SMTP_PASSWORD` | _(unset)_ | Password for the SMTP account used to send reminder emails (for Gmail, an [app password](https://myaccount.google.com/apppasswords)). All other email settings are configured on the Admin page. |
 
 ---
 
@@ -180,6 +181,30 @@ Pass the variables via a `.env` file or directly in `docker-compose.yml` under `
 
 ---
 
+## Email Reminders
+
+The app can email a reminder when maintenance items are overdue or due soon. Open the **Admin** page (gear icon in the toolbar) to configure it. Settings apply to all vehicles and are stored in the database — except the SMTP password, which comes from the `SMTP_PASSWORD` environment variable.
+
+- **Send reminder emails** — turns scheduled reminders on or off.
+- **Reminder rules** — include *overdue items only*, or *overdue and due-soon items*. These use the same statuses as the Status Report (with mileage estimated from each vehicle's avg miles/year, as when the report's odometer field is left blank).
+- **Send at most every N days** — 1 (daily) to 30 (monthly).
+- **Email account** — SMTP host, port, security (STARTTLS / SSL/TLS / none), username, from address and recipients. **Use Gmail defaults** fills in `smtp.gmail.com`, port 587 and STARTTLS, and uses the from address as the username; every field remains editable.
+
+### How it works
+
+- The app checks once an hour. When reminders are enabled, the configured interval has passed since the last reminder, and at least one item matches the rule, it sends a single email listing every matching item, grouped by vehicle.
+- If nothing matches, no email is sent; the next matching item triggers an email at the following hourly check.
+- **Preview email** opens the email that would be sent right now in a new tab. **Send email now** runs the same logic immediately (sending nothing if no items match). Neither one affects the reminder schedule, and both use the saved settings, so save any changes first.
+- Send failures (bad credentials, unreachable server) are logged and the app continues running.
+
+### Gmail setup
+
+1. Enable 2-Step Verification on the Google account, then create an app password at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+2. Set `SMTP_PASSWORD` to the app password and restart the app.
+3. On the Admin page, enter your Gmail address as the from address, click **Use Gmail defaults**, enter recipients, enable reminders and save.
+
+---
+
 ## Project Structure
 
 ```
@@ -196,9 +221,12 @@ vehicle-maintenance/
 │   │   ├── records.py           # CRUD for service records per vehicle
 │   │   ├── mileage.py           # CRUD for mileage records per vehicle
 │   │   ├── admin.py             # Database export/import endpoints
+│   │   ├── email.py             # Reminder email settings, preview and send-now endpoints
 │   │   └── status.py            # GET /api/vehicles/{id}/status
 │   └── services/
-│       └── due_calculator.py    # Due/overdue business logic
+│       ├── due_calculator.py    # Due/overdue business logic
+│       ├── vehicle_status.py    # Builds a vehicle's status report (API and emails)
+│       └── reminders.py         # Reminder email rendering, sending and scheduling
 ├── scripts/
 │   └── setup_dropbox.py         # One-time Dropbox OAuth2 setup helper
 ├── frontend/
@@ -207,7 +235,8 @@ vehicle-maintenance/
 │       │   ├── vehicles/        # Vehicle list, form dialog, detail view
 │       │   ├── maintenance-types/ # Maintenance type list and form
 │       │   ├── records/         # Service record list and log form
-│       │   └── status/          # Status report with odometer input
+│       │   ├── status/          # Status report with odometer input
+│       │   └── admin/           # Admin page (email reminder settings)
 │       ├── core/
 │       │   ├── models/          # TypeScript interfaces
 │       │   ├── services/        # HTTP services
@@ -236,4 +265,4 @@ vehicle-maintenance/
 | Due | Within 500 miles of due |
 | Upcoming | Within 1,000 miles of due |
 | OK | More than 1,000 miles remaining |
-| Never Done | No service record exists yet |
+| Never Done | No service record exists yet and more than 1,000 miles remain until the first interval. Never-done items closer than that show as Upcoming, Due or Overdue, measured from 0 miles. |
